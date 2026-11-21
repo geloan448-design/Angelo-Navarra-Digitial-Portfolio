@@ -51,6 +51,8 @@ tests/
   skills.spec.js           filter buttons, the correct cards for each category, keyboard use
   projects.spec.js         details expand and collapse, repository link, mobile card layout
   interactions.spec.js     reveal animations, layout shift, parallax, reduced motion
+  certificates.spec.js     certificate cards, preview dialog (open/close/keyboard/focus), verify links, empty list
+  data/certificates.fixture.js   fake test certificates served in place of certificates.js during tests
   contact.spec.js          mailto, LinkedIn and GitHub links, new-tab safety, broken links
   accessibility.spec.js    axe-core, keyboard, alt text, headings, landmarks, labels
 scripts/
@@ -64,6 +66,7 @@ Reports are written to `playwright-report/`, `reports/` and `test-results/`. The
 
 ## Notes on how the tests work
 
+- Tests **always use test certificates** from `tests/data/certificates.fixture.js` instead of your real `certificates.js`. That way the Certificates section is tested even while your list is empty, and the tests keep passing however many certificates you add.
 - External sites are **stubbed** in the link tests. They stay fast and still work offline, while still checking the exact URL that opens in the new tab.
 - The layout and accessibility tests emulate `prefers-reduced-motion: reduce`. This makes them measure the final layout rather than a frame halfway through an animation. The animations themselves are tested separately with motion enabled.
 - `body { overflow-x: hidden }` hides horizontal overflow, so the responsive tests also check each element's position against the viewport edges.

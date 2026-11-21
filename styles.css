@@ -17,3 +17,42 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*:before,*:after{animation:none!important;transition:none!important}[data-reveal]{opacity:1!important;transform:none!important}.portrait-photo{transform:none!important}}
 /* Keep decorative, rotated orbit lines inside their media column at narrow widths. */
 @media(max-width:900px){.hero-visual{overflow:hidden}}
+
+/* ── Certificates section ───────────────────────────────────────────────── */
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+[hidden]{display:none!important}
+.cert-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px}
+.cert-card{position:relative;display:flex;flex-direction:column;padding:26px;min-height:230px;overflow:hidden;transition:transform .27s,border-color .27s,box-shadow .27s}
+.cert-card:hover{transform:translateY(-5px);border-color:rgba(64,213,241,.46);box-shadow:0 16px 45px rgba(0,0,0,.2)}
+.cert-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px}
+.cert-icon{width:46px;height:46px;display:grid;place-items:center;border-radius:13px;border:1px solid rgba(65,187,220,.15);background:rgba(59,204,238,.095);color:var(--cyan)}
+.cert-icon .icon{width:23px;height:23px}
+.cert-index{font-size:11px;letter-spacing:.07em;color:#56718a;font-weight:750;padding-top:4px}
+.cert-issuer{font-size:10px;font-weight:780;letter-spacing:.13em;text-transform:uppercase;color:#69dbef;margin-bottom:8px}
+.cert-card h3{font-size:17px;font-weight:740;letter-spacing:-.03em;line-height:1.35;margin:0 0 10px}
+.cert-meta{display:flex;flex-wrap:wrap;gap:6px 14px;margin:0 0 20px;font-size:12px;color:var(--muted)}
+.cert-meta span+span{position:relative}
+.cert-meta span+span:before{content:"";position:absolute;left:-8px;top:50%;width:3px;height:3px;border-radius:50%;background:var(--cyan);transform:translateY(-50%)}
+.cert-actions{margin-top:auto;display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px;padding-top:16px;border-top:1px solid var(--stroke)}
+.cert-view,.cert-verify{display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:8px 0;border:0;background:none;cursor:pointer;font-size:12px;font-weight:720;color:#b7d1e3;transition:color .2s}
+.cert-view{color:var(--cyan2)}
+.cert-view:hover,.cert-verify:hover{color:var(--cyan)}
+.cert-view .icon,.cert-verify .icon{width:16px;height:16px}
+
+/* Preview dialog */
+.cert-dialog{width:min(920px,calc(100% - 32px));max-height:calc(100dvh - 32px);padding:0;border:1px solid var(--stroke-bright);border-radius:var(--radius);background:linear-gradient(145deg,#11273d,#0a1b2e);color:var(--text);box-shadow:0 30px 90px rgba(0,0,0,.55);overflow:auto}
+.cert-dialog[open]{display:flex;flex-direction:column;animation:cert-pop .22s ease both}
+.cert-dialog::backdrop{background:rgba(2,8,16,.82);backdrop-filter:blur(6px)}
+.cert-dialog-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:20px 22px 14px}
+.cert-dialog-head small{display:block;font-size:10px;font-weight:780;letter-spacing:.13em;text-transform:uppercase;color:#69dbef;margin-bottom:4px}
+.cert-dialog-head h3{margin:0;font-size:19px;letter-spacing:-.03em;line-height:1.3}
+.cert-dialog-close{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:10px;border:1px solid rgba(91,194,233,.25);background:rgba(35,119,156,.1);color:#d7f6ff;cursor:pointer}
+.cert-dialog-close:hover{background:rgba(51,181,229,.18)}
+.cert-dialog-frame{padding:0 22px;display:grid;place-items:center;min-height:0}
+.cert-dialog-frame img{display:block;max-width:100%;max-height:calc(100dvh - 190px);width:auto;height:auto;border-radius:10px;background:#fff}
+.cert-dialog-meta{margin:0;padding:14px 22px 20px;font-size:12px;color:var(--muted)}
+body:has(.cert-dialog[open]){overflow:hidden}
+@keyframes cert-pop{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+@media(max-width:900px){.cert-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.cert-grid{grid-template-columns:1fr;gap:12px}.cert-card{padding:22px 20px;min-height:0}.cert-dialog-head{padding:16px 16px 12px}.cert-dialog-head h3{font-size:16px}.cert-dialog-frame{padding:0 16px}.cert-dialog-meta{padding:12px 16px 16px}}
+@media(prefers-reduced-motion:reduce){.cert-dialog[open]{animation:none}}

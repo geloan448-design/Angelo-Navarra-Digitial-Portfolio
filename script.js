@@ -5,6 +5,48 @@
   const navAnchors = document.querySelectorAll('.nav-link');
   const progress = document.querySelector('#scroll-progress');
   const header = document.querySelector('.site-header');
+
+  // ── Certificates: built from certificates.js before the observers below run ──
+  const certs = Array.isArray(window.CERTIFICATES) ? window.CERTIFICATES.filter(c => c && c.title) : [];
+  const certSection = document.querySelector('#certificates');
+  const certGrid = document.querySelector('#cert-grid');
+  const make = (tag, cls, text) => { const el = document.createElement(tag); if (cls) el.className = cls; if (text) el.textContent = text; return el; };
+  const icon = (id) => { const ns = 'http://www.w3.org/2000/svg', svg = document.createElementNS(ns, 'svg'), use = document.createElementNS(ns, 'use'); svg.setAttribute('class', 'icon'); svg.setAttribute('aria-hidden', 'true'); use.setAttribute('href', `#${id}`); svg.append(use); return svg; };
+  certs.forEach((c, i) => {
+    const card = make('article', 'cert-card panel');
+    card.dataset.reveal = '';
+    const top = make('div', 'cert-top');
+    const badge = make('span', 'cert-icon'); badge.append(icon('i-award'));
+    top.append(badge, make('span', 'cert-index', String(i + 1).padStart(2, '0')));
+    const meta = make('p', 'cert-meta');
+    if (c.issued) meta.append(make('span', '', `Issued ${c.issued}`));
+    if (c.detail) meta.append(make('span', '', c.detail));
+    const actions = make('div', 'cert-actions');
+    if (c.image) {
+      const view = make('button', 'cert-view', 'View certificate');
+      view.type = 'button';
+      view.setAttribute('aria-haspopup', 'dialog');
+      view.dataset.cert = String(i);
+      view.setAttribute('aria-label', `View certificate: ${c.title}`);
+      view.append(icon('i-eye'));
+      actions.append(view);
+    }
+    if (c.link) {
+      const verify = make('a', 'cert-verify', 'Verify');
+      verify.href = c.link; verify.target = '_blank'; verify.rel = 'noreferrer';
+      verify.setAttribute('aria-label', `Verify ${c.title} (opens in a new tab)`);
+      verify.append(icon('i-external'));
+      actions.append(verify);
+    }
+    card.append(top, make('div', 'cert-issuer', c.issuer || ''), make('h3', '', c.title), meta);
+    if (actions.children.length) card.append(actions);
+    certGrid.append(card);
+  });
+  if (certs.length) {
+    certSection.hidden = false;
+    document.querySelector('.nav-link[href="#certificates"]').hidden = false;
+  }
+
   const setMenu = (open) => {
     menuBtn.setAttribute('aria-expanded', String(open));
     menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
@@ -57,5 +99,38 @@
       stage.style.setProperty('--mouse-x',`${x*15}px`);stage.style.setProperty('--mouse-y',`${y*10}px`);
     });
     stage.addEventListener('pointerleave',()=>{stage.style.setProperty('--mouse-x','0px');stage.style.setProperty('--mouse-y','0px');});
+  }
+
+  // ── Certificate preview (native <dialog>: traps focus, Esc closes, background inert) ──
+  const dialog = document.querySelector('#cert-dialog');
+  if (certs.length && dialog && typeof dialog.showModal === 'function') {
+    // The <img> is created on first open so no empty image exists on the page before that.
+    let dImg = null;
+    let opener = null;
+    certGrid.addEventListener('click', (e) => {
+      const btn = e.target.closest('.cert-view');
+      if (!btn) return;
+      const c = certs[Number(btn.dataset.cert)];
+      opener = btn;
+      dialog.querySelector('#cert-dialog-issuer').textContent = c.issuer || '';
+      dialog.querySelector('#cert-dialog-title').textContent = c.title;
+      dialog.querySelector('#cert-dialog-meta').textContent = [c.issued && `Issued ${c.issued}`, c.detail].filter(Boolean).join(' · ');
+      if (!dImg) {
+        dImg = make('img');
+        dImg.id = 'cert-dialog-img';
+        dImg.decoding = 'async';
+        dialog.querySelector('#cert-dialog-frame').append(dImg);
+      }
+      dImg.src = c.image;
+      dImg.alt = `Certificate: ${c.title}, issued by ${c.issuer || 'unknown issuer'}`;
+      dialog.showModal();
+    });
+    dialog.querySelector('.cert-dialog-close').addEventListener('click', () => dialog.close());
+    // Click on the dimmed backdrop (outside the dialog box) closes it.
+    dialog.addEventListener('click', (e) => {
+      const r = dialog.getBoundingClientRect();
+      if (e.target === dialog && (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom)) dialog.close();
+    });
+    dialog.addEventListener('close', () => { if (opener) opener.focus(); });
   }
 })();

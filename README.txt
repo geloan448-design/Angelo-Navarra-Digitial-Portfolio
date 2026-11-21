@@ -19,6 +19,8 @@ EDITING
   styles.css — colors, layout, and animation settings
   script.js  — interactive navigation, filters, and project details
   photo.webp — cutout of the provided portrait photograph
+  certificates.js — your certificates list (the section appears once it has an entry)
+  certificates/   — certificate images
 
 This is a standalone visual/interaction demo created to preview the requested design.
 It does not replace the existing Next.js + TypeScript project automatically.

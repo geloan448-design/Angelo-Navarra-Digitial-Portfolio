@@ -81,7 +81,7 @@ async function findCoveredControls(page) {
 
 /** Pairs of sibling cards in a grid that overlap each other. */
 function findOverlappingCards() {
-  const groups = ['.metrics-section > .metrics-card', '#skills-grid > .skill-card:not([hidden])', '.contact-methods > .contact-method', '.hero-actions > .btn', '.skill-tabs > .skill-tab', '.journey-grid > *', '.about-grid > *', '.featured-project > *'];
+  const groups = ['.metrics-section > .metrics-card', '#skills-grid > .skill-card:not([hidden])', '#cert-grid > .cert-card','.contact-methods > .contact-method', '.hero-actions > .btn', '.skill-tabs > .skill-tab', '.journey-grid > *', '.about-grid > *', '.featured-project > *'];
   const out = [];
   for (const sel of groups) {
     const els = [...document.querySelectorAll(sel)];
@@ -169,6 +169,7 @@ for (const vp of VIEWPORTS) {
       const expectedSkillCols = vp.width > 900 ? 3 : 2;
       expect(await cols('#skills-grid')).toBe(expectedSkillCols);
       expect(await cols('.featured-project')).toBe(vp.width > 640 ? 2 : 1);
+      expect(await cols('#cert-grid')).toBe(vp.width > 900 ? 3 : vp.width > 640 ? 2 : 1);
     });
 
     test('full-page screenshot (attached to report for visual review)', async ({ page }, testInfo) => {

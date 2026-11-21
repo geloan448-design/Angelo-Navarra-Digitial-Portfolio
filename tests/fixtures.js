@@ -3,13 +3,27 @@
 // Every test that imports `test` from this file automatically fails if the page
 // throws an uncaught JavaScript error, logs a console error, or a same-origin
 // resource (CSS, JS, image) fails to load.
+const path = require('path');
 const base = require('@playwright/test');
 const { expect } = base;
 
-const SECTION_IDS = ['home', 'about', 'skills', 'projects', 'experience', 'contact'];
+const SECTION_IDS = ['home', 'about', 'skills', 'projects', 'experience', 'certificates', 'contact'];
 const MOBILE_NAV_BREAKPOINT = 900; // matches @media(max-width:900px) in styles.css
+const CERT_FIXTURE = path.join(__dirname, 'data', 'certificates.fixture.js');
+const CERT_TEST_IMAGE = path.join(__dirname, '..', 'photo.webp'); // stand-in image for test certificates
 
 const test = base.test.extend({
+  // Serve test certificates instead of the real (possibly empty) certificates.js,
+  // so the section is always present and testable. A test can override this
+  // with page.route('**/certificates.js', ...) — page routes win over context routes.
+  certificateData: [
+    async ({ context }, use) => {
+      await context.route('**/certificates.js', (route) => route.fulfill({ path: CERT_FIXTURE, contentType: 'text/javascript' }));
+      await context.route('**/certificates/test-*', (route) => route.fulfill({ path: CERT_TEST_IMAGE, contentType: 'image/webp' }));
+      await use();
+    },
+    { auto: true },
+  ],
   pageIssues: [
     async ({ page, baseURL }, use) => {
       const issues = [];
@@ -75,7 +89,7 @@ async function scrollThroughPage(page) {
 
 /** Stub external sites so link tests are fast, offline-safe and don't hit real servers. */
 async function stubExternalSites(context) {
-  await context.route(/^https:\/\/(www\.)?(github\.com|linkedin\.com)\//, (route) =>
+  await context.route(/^https:\/\/(www\.)?(github\.com|linkedin\.com|example\.com)\//, (route) =>
     route.fulfill({ status: 200, contentType: 'text/html', body: '<!doctype html><title>stub</title>' }),
   );
 }
