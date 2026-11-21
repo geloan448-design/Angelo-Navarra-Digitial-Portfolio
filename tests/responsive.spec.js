@@ -81,7 +81,7 @@ async function findCoveredControls(page) {
 
 /** Pairs of sibling cards in a grid that overlap each other. */
 function findOverlappingCards() {
-  const groups = ['.metrics-section > .metrics-card', '#skills-grid > .skill-card:not([hidden])', '#cert-grid > .cert-card','.contact-methods > .contact-method', '.hero-actions > .btn', '.skill-tabs > .skill-tab', '.journey-grid > *', '.about-grid > *', '.featured-project > *'];
+  const groups = ['.metrics-section > .metrics-card', '#skills-grid > .skill-card:not([hidden])', '#cert-grid > .cert-card', '.gallery-list > li', '.contact-methods > .contact-method', '.hero-actions > .btn', '.skill-tabs > .skill-tab', '.journey-grid > *', '.about-grid > *', '.featured-project > *'];
   const out = [];
   for (const sel of groups) {
     const els = [...document.querySelectorAll(sel)];
@@ -131,6 +131,13 @@ for (const vp of VIEWPORTS) {
     });
 
     test('images load and display at a sensible size', async ({ page }) => {
+      // Scroll each image into view and wait for it: thumbnails use loading="lazy".
+      for (const img of await page.locator('img').all()) {
+        await img.evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
+        await expect.poll(() => img.evaluate((el) => el.complete && el.naturalWidth > 0), {
+          message: `${await img.getAttribute('src')} should load`,
+        }).toBe(true);
+      }
       const imgs = await page.locator('img').evaluateAll((els) => els.map((img) => {
         img.scrollIntoView({ block: 'center', behavior: 'instant' });
         const r = img.getBoundingClientRect();
@@ -170,6 +177,7 @@ for (const vp of VIEWPORTS) {
       expect(await cols('#skills-grid')).toBe(expectedSkillCols);
       expect(await cols('.featured-project')).toBe(vp.width > 640 ? 2 : 1);
       expect(await cols('#cert-grid')).toBe(vp.width > 900 ? 3 : vp.width > 640 ? 2 : 1);
+      expect(await cols('.gallery-list')).toBe(vp.width > 640 ? 4 : 2);
     });
 
     test('full-page screenshot (attached to report for visual review)', async ({ page }, testInfo) => {

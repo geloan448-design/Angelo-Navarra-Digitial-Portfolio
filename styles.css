@@ -65,3 +65,23 @@ body:has(.cert-dialog[open]){overflow:hidden}
 .project-details ul{columns:2;column-gap:28px}
 .project-details li{break-inside:avoid}
 @media(max-width:1180px){.project-details ul{columns:1}}
+
+/* ── Project screenshot gallery ─────────────────────────────────────────── */
+.project-gallery{margin-top:28px}
+.gallery-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px 20px;flex-wrap:wrap;margin-bottom:16px}
+.gallery-head h3{margin:0;font-size:18px;letter-spacing:-.03em}
+.gallery-head p{margin:0;font-size:11px;color:var(--subtle);letter-spacing:.02em}
+.gallery-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.gallery-thumb{display:block;width:100%;padding:0;border:1px solid rgba(139,200,234,.14);border-radius:14px;overflow:hidden;background:#0b1c2e;color:#b7d1e3;cursor:zoom-in;text-align:left;transition:transform .25s,border-color .25s,box-shadow .25s}
+.gallery-thumb:hover{transform:translateY(-4px);border-color:rgba(64,213,241,.46);box-shadow:0 14px 36px rgba(0,0,0,.25)}
+.gallery-thumb img{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;object-position:top}
+.gallery-thumb span{display:block;padding:10px 12px;font-size:11.5px;font-weight:700;border-top:1px solid var(--stroke)}
+.gallery-dialog{width:min(1180px,calc(100% - 32px))}
+.gallery-stage{position:relative;display:flex;align-items:center;gap:10px;padding:0 12px}
+.gallery-stage .cert-dialog-frame{flex:1;padding:0;min-width:0}
+.gallery-stage .cert-dialog-frame img{background:#0b1c2e;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.gallery-nav{flex:none;display:grid;place-items:center;width:42px;height:42px;border-radius:50%;border:1px solid rgba(91,194,233,.3);background:rgba(35,119,156,.14);color:#d7f6ff;cursor:pointer;transition:background .2s}
+.gallery-nav:hover{background:rgba(51,181,229,.26)}
+.gallery-prev .icon{transform:rotate(180deg)}
+@media(max-width:640px){.gallery-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.gallery-head h3{font-size:16px}.gallery-stage{padding:0 8px;gap:6px}.gallery-nav{width:36px;height:36px}}
+@media(max-width:640px){.gallery-stage{padding:0 10px}.gallery-nav{position:absolute;top:50%;z-index:1;transform:translateY(-50%);background:rgba(7,17,30,.82);border-color:rgba(91,194,233,.45)}.gallery-prev{left:2px}.gallery-next{right:2px}}

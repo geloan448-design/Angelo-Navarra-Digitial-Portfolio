@@ -133,4 +133,39 @@
     });
     dialog.addEventListener('close', () => { if (opener) opener.focus(); });
   }
+
+  // ── Project screenshot viewer (reuses the certificate dialog styles) ──
+  const gDialog = document.querySelector('#gallery-dialog');
+  const thumbs = [...document.querySelectorAll('.gallery-thumb')];
+  if (gDialog && thumbs.length && typeof gDialog.showModal === 'function') {
+    let current = 0, gImg = null, gOpener = null;
+    const show = (i) => {
+      current = (i + thumbs.length) % thumbs.length; // wrap around
+      const t = thumbs[current];
+      if (!gImg) {
+        gImg = make('img');
+        gImg.id = 'gallery-img';
+        gImg.decoding = 'async';
+        gDialog.querySelector('#gallery-frame').append(gImg);
+      }
+      gImg.src = t.dataset.full;
+      gImg.alt = `Screenshot of the Leo Mejillano Salon platform: ${t.dataset.title}. ${t.dataset.caption}`;
+      gDialog.querySelector('#gallery-title').textContent = t.dataset.title;
+      gDialog.querySelector('#gallery-count').textContent = `Screenshot ${current + 1} of ${thumbs.length}`;
+      gDialog.querySelector('#gallery-caption').textContent = t.dataset.caption;
+    };
+    thumbs.forEach((t, i) => t.addEventListener('click', () => { gOpener = t; show(i); gDialog.showModal(); }));
+    gDialog.querySelector('.gallery-prev').addEventListener('click', () => show(current - 1));
+    gDialog.querySelector('.gallery-next').addEventListener('click', () => show(current + 1));
+    gDialog.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); show(current - 1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); show(current + 1); }
+    });
+    gDialog.querySelector('.cert-dialog-close').addEventListener('click', () => gDialog.close());
+    gDialog.addEventListener('click', (e) => {
+      const r = gDialog.getBoundingClientRect();
+      if (e.target === gDialog && (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom)) gDialog.close();
+    });
+    gDialog.addEventListener('close', () => { if (gOpener) thumbs[current].focus(); });
+  }
 })();

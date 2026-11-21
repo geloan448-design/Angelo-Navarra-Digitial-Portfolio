@@ -8,9 +8,10 @@ module.exports = defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  // Half the CPU cores: each worker runs a full browser, and saturating the
-  // CPU caused spurious timeouts on smooth-scroll and animation tests.
-  workers: '50%',
+  // Each worker runs a full browser. More than ~3 at once overloaded this
+  // laptop (12 threads) and caused spurious timeouts in scroll/animation tests.
+  // Override any time with: npx playwright test --workers=6
+  workers: process.env.CI ? '50%' : 3,
   timeout: 60_000,
   expect: { timeout: 10_000 },
   reporter: [

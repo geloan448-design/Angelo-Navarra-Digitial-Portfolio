@@ -106,8 +106,12 @@ test.describe('Accessibility – content structure', () => {
   });
 
   test('all images have meaningful alternative text', async ({ page }) => {
-    const imgs = await page.locator('img').evaluateAll((els) => els.map((i) => ({ src: i.getAttribute('src'), alt: i.getAttribute('alt') })));
-    for (const img of imgs) {
+    const imgs = await page.locator('img').evaluateAll((els) => els.map((i) => {
+      // alt="" is correct for an image inside a button/link that already has its own label.
+      const host = i.closest('button[aria-label], a[aria-label]');
+      return { src: i.getAttribute('src'), alt: i.getAttribute('alt'), decorativeInLabelledControl: i.getAttribute('alt') === '' && !!host };
+    }));
+    for (const img of imgs.filter((i) => !i.decorativeInLabelledControl)) {
       expect(img.alt, `${img.src} needs alt text`).not.toBeNull();
       expect(img.alt.trim().length, `${img.src} alt should describe the image`).toBeGreaterThan(5);
       expect(img.alt.toLowerCase()).not.toMatch(/^(image|photo|picture|img)$/);
