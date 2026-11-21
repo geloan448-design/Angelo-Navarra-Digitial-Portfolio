@@ -1,0 +1,25 @@
+{
+  "name": "angelo-navarra-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static HTML/CSS/JS portfolio with automated Playwright, axe-core, Lighthouse and W3C HTML validation tests.",
+  "scripts": {
+    "serve": "node scripts/serve.js",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed --project=desktop-chromium",
+    "test:a11y": "playwright test tests/accessibility.spec.js",
+    "test:responsive": "playwright test tests/responsive.spec.js",
+    "report": "playwright show-report",
+    "validate:html": "node scripts/validate-html.js",
+    "lighthouse": "node scripts/lighthouse.js",
+    "lighthouse:mobile": "node scripts/lighthouse.js --mobile",
+    "test:all": "npm run validate:html && npm test && npm run lighthouse && npm run lighthouse:mobile"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.65.1",
+    "chrome-launcher": "^1.2.0",
+    "lighthouse": "^13.6.0"
+  }
+}
