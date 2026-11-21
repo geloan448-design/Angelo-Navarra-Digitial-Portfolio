@@ -56,3 +56,12 @@ body:has(.cert-dialog[open]){overflow:hidden}
 @media(max-width:900px){.cert-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:640px){.cert-grid{grid-template-columns:1fr;gap:12px}.cert-card{padding:22px 20px;min-height:0}.cert-dialog-head{padding:16px 16px 12px}.cert-dialog-head h3{font-size:16px}.cert-dialog-frame{padding:0 16px}.cert-dialog-meta{padding:12px 16px 16px}}
 @media(prefers-reduced-motion:reduce){.cert-dialog[open]{animation:none}}
+
+/* ── Project card additions ─────────────────────────────────────────────── */
+.project-info>p.project-meta{margin:-8px 0 16px;font-size:11px;font-weight:650;letter-spacing:.02em;color:#7fb4c9}
+.project-meta span{color:var(--cyan);padding:0 4px}
+.project-link{display:inline-flex;align-items:center;gap:7px;text-decoration:none}
+.project-link .icon{width:15px;height:15px}
+.project-details ul{columns:2;column-gap:28px}
+.project-details li{break-inside:avoid}
+@media(max-width:1180px){.project-details ul{columns:1}}

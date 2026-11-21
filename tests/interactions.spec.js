@@ -20,9 +20,9 @@ test.describe('Reveal animations', () => {
 
   test('every [data-reveal] element becomes visible after scrolling the whole page', async ({ page }) => {
     await scrollThroughPage(page);
-    const notRevealed = await page.locator('[data-reveal]:not(.visible)').evaluateAll((els) =>
+    const notRevealed = () => page.locator('[data-reveal]:not(.visible)').evaluateAll((els) =>
       els.map((el) => `${el.tagName.toLowerCase()}.${[...el.classList].join('.')}`));
-    expect(notRevealed).toEqual([]);
+    await expect.poll(notRevealed, { message: 'elements never revealed' }).toEqual([]);
   });
 
   test('hero content is visible immediately on load', async ({ page }) => {

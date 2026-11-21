@@ -76,20 +76,26 @@ async function waitForScrollEnd(page) {
   }));
 }
 
-/** Scroll instantly to the bottom in steps so every reveal observer fires. */
+/**
+ * Scroll to the bottom in steps so every reveal observer fires.
+ * IntersectionObserver only samples on rendered frames, so each step waits for
+ * two real animation frames (a fixed timer can skip frames on a busy machine).
+ */
 async function scrollThroughPage(page) {
   await page.evaluate(async () => {
+    const frames = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
     const step = Math.max(200, window.innerHeight / 2);
     for (let y = 0; y <= document.documentElement.scrollHeight; y += step) {
       window.scrollTo({ top: y, behavior: 'instant' });
-      await new Promise((r) => setTimeout(r, 40));
+      await frames();
+      await new Promise((r) => setTimeout(r, 30));
     }
   });
 }
 
 /** Stub external sites so link tests are fast, offline-safe and don't hit real servers. */
 async function stubExternalSites(context) {
-  await context.route(/^https:\/\/(www\.)?(github\.com|linkedin\.com|example\.com)\//, (route) =>
+  await context.route(/^https:\/\/(www\.)?(github\.com|linkedin\.com|example\.com|leo-mejillano-salon\.site)\//, (route) =>
     route.fulfill({ status: 200, contentType: 'text/html', body: '<!doctype html><title>stub</title>' }),
   );
 }

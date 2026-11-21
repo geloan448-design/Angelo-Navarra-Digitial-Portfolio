@@ -22,12 +22,17 @@ test.describe('Projects section', () => {
     await expect(details).toBeVisible();
     await expect(btn).toHaveAttribute('aria-expanded', 'true');
     await expect(btn.locator('.detail-chevron')).toHaveText('↑');
-    await expect(details.locator('h4')).toHaveText('What this project covers');
+    await expect(details.locator('h4')).toHaveText('Key features');
     await expect(details.locator('li')).toHaveText([
-      'Multi-branch appointment booking',
-      'Staff and service management',
+      'Online appointment booking across three branches in Albay',
+      'Service and stylist selection with appointment scheduling',
+      'Online payments with multiple options (PayMongo)',
+      'Email and SMS verification',
+      'Booking tracking for customers',
+      'Account registration and login',
+      'Home and event service requests',
+      'Team Portal for staff and service management',
       'Inventory tracking and reports',
-      'Web interface development and team collaboration',
     ]);
   });
 
@@ -65,6 +70,22 @@ test.describe('Projects section', () => {
     expect(page.url(), 'original tab stays on the portfolio').toContain('127.0.0.1');
   });
 
+  test('card shows dates, team and tech stack', async ({ page }) => {
+    const info = page.locator('.project-info');
+    await expect(info.locator('.project-meta')).toHaveText('March – December 2026 · With Michael Kharl Agao & Paulo Balaguer');
+    await expect(info.locator('.tech-tags span')).toHaveText(['PHP 8', 'MySQL / MariaDB', 'Tailwind CSS', 'JavaScript', 'PayMongo', 'Brevo', 'textbee SMS', 'Docker', 'Vercel']);
+  });
+
+  test('"Live Site" link opens the deployed salon platform in a new tab', async ({ page, context }) => {
+    const link = page.getByRole('link', { name: /Live Site/ });
+    await expect(link).toHaveAttribute('href', 'https://leo-mejillano-salon.site/');
+    await expect(link).toHaveAttribute('target', '_blank');
+    await expect(link).toHaveAttribute('rel', /noreferrer|noopener/);
+    const [popup] = await Promise.all([context.waitForEvent('page'), link.click()]);
+    await popup.waitForLoadState();
+    expect(popup.url()).toBe('https://leo-mejillano-salon.site/');
+  });
+
   test('project card displays properly (stacked on phones, side-by-side on larger screens)', async ({ page }) => {
     const card = page.locator('.featured-project');
     // Wait for the reveal transition to finish so all boxes are measured at rest.
@@ -85,7 +106,7 @@ test.describe('Projects section', () => {
       expect(Math.abs(info.y - art.y)).toBeLessThan(3);
     }
     // Buttons remain fully visible and tappable (at least 24px tall – WCAG 2.2 target size).
-    for (const sel of ['.btn-project', '#project-details-btn']) {
+    for (const sel of ['.btn-project', '.project-link', '#project-details-btn']) {
       const b = await page.locator(sel).boundingBox();
       expect(b.height, `${sel} tap target height`).toBeGreaterThanOrEqual(24);
       expect(b.x + b.width).toBeLessThanOrEqual(cardBox.x + cardBox.width);
